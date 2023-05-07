@@ -19,10 +19,9 @@ fs.readdir(folderPath, (err, files) => {
       if (stats.isFile()) {
         const name = path.parse(filePath).name;
         const extension = path.parse(filePath).ext.slice(1);
-        const size = stats.size / 1024; // размер в килобайтах
+        const size = stats.size / 1024;
         console.log(`${name}-${extension}-${size.toFixed(3)}kb`);
       }
     });
   });
 });
-

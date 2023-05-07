@@ -1,27 +1,26 @@
-const fs = require('fs');
+const fs = require('fs').promises;
 const path = require('path');
 
-function copyDir(sourceDir, destinationDir) {
-  fs.mkdirSync(destinationDir, { recursive: true });
+const copyDir = async (src, dest) => {
+  const entries = await fs.readdir(src, { withFileTypes: true });
 
-  const files = fs.readdirSync(sourceDir);
+  await fs.mkdir(dest, { recursive: true });
 
-  files.forEach((file) => {
-    const sourceFile = path.join(sourceDir, file);
-    const destinationFile = path.join(destinationDir, file);
-    const fileStats = fs.statSync(sourceFile);
-    if (fileStats.isFile()) {
-      const fileContent = fs.readFileSync(sourceFile);
-      fs.writeFileSync(destinationFile, fileContent);
-    } else if (fileStats.isDirectory()) {
-      copyDir(sourceFile, destinationFile);
+  for (let entry of entries) {
+    const srcPath = path.join(src, entry.name);
+    const destPath = path.join(dest, entry.name);
+
+    if (entry.isDirectory()) {
+      await copyDir(srcPath, destPath);
+    } else {
+      await fs.copyFile(srcPath, destPath);
     }
-  });
-}
+  }
+};
 
-const sourceDir = path.resolve(__dirname, 'files');
-const destinationDir = path.resolve(__dirname, 'files-copy');
+const srcDir = path.join(__dirname, 'files');
+const destDir = path.join(__dirname, 'files-copy');
 
-copyDir(sourceDir, destinationDir);
-
-console.log(`The content of the folder ${sourceDir} is successfully copied into the folder ${destinationDir}`);
+copyDir(srcDir, destDir)
+  .then(() => console.log('Directory copied successfully.'))
+  .catch((err) => console.error(err));

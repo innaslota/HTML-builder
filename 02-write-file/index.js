@@ -8,7 +8,7 @@ const rl = readline.createInterface({
 
 const fileStream = fs.createWriteStream('text.txt', { flags: 'a' });
 
-console.log('Please enter you favourite dishes (or enter "exit" to finish):');
+console.log('Please enter you favorite dishes (or enter "exit" to finish):');
 
 rl.on('line', (input) => {
   if (input === 'exit') {
