@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const folderPath = './03-files-in-folder/secret-folder';
+const folderPath = path.join(__dirname, 'secret-folder');
 
 fs.readdir(folderPath, (err, files) => {
   if (err) {
@@ -17,10 +17,12 @@ fs.readdir(folderPath, (err, files) => {
         return;
       }
       if (stats.isFile()) {
-        const ext = path.extname(file).substring(1);
-        const size = stats.size;
-        console.log(`${file}-${ext}-${size} bytes`);
+        const name = path.parse(filePath).name;
+        const extension = path.parse(filePath).ext.slice(1);
+        const size = stats.size / 1024; // размер в килобайтах
+        console.log(`${name}-${extension}-${size.toFixed(3)}kb`);
       }
     });
   });
 });
+
